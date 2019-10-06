@@ -1,0 +1,57 @@
+<p-table #dt [columns]="columnsDefs" [value]="data" [lazy]="true" (onLazyLoad)="loadFromServer($event)"
+  [paginator]="true" [rows]="settings.rowsPerPage" [totalRecords]="totalRecords"
+  [sortField]="settings.defaultSort ? settings.defaultSort.field : null"
+  [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1">
+
+  <ng-template pTemplate="caption" *ngIf="settings.globalFilter">
+    <div style="text-align: right">
+      <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+      <input type="text" pInputText size="50" (input)="dt.filterGlobal($event.target.value)" style="width:auto">
+    </div>
+  </ng-template>
+
+
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.sortable">
+        {{col.header}}
+        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+      </th>
+
+    </tr>
+    <tr>
+      <th *ngFor="let col of columns">
+        <input *ngIf="col.searchable && col.type==='string'" pInputText type="text"
+          (input)="dt.filter($event.target.value, col.field)">
+        <input *ngIf="col.searchable && col.type==='number'" pInputText type="number"
+          (input)="dt.filter($event.target.value, col.field)">
+        <p-calendar *ngIf="col.searchable && col.type==='date'" (onSelect)="dt.filter($event.getTime(), col.field)"
+          showButtonBar="true" readonlyInput="true" (onClearClick)="dt.filter(null, col.field, null)"></p-calendar>
+
+        <p-calendar #rng *ngIf="col.searchable && col.type==='range'"
+          (onSelect)="dt.filter(makeRange(rng.value), col.field)" selectionMode="range" showButtonBar="true"
+          readonlyInput="true" (onClearClick)="dt.filter(null, col.field, null)"></p-calendar>
+      </th>
+    </tr>
+  </ng-template>
+
+
+
+
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr>
+      <td *ngFor="let col of columns">
+        {{rowData[col.field]}}
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td [attr.colspan]="columns.length">
+        {{settings.emptyMessage}}
+      </td>
+    </tr>
+  </ng-template>
+
+</p-table>

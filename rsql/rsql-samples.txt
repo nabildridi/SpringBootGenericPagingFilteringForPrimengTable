@@ -1,0 +1,33 @@
+	filter = "company.code==demo"; //equal
+	filter = "company.code=='demo'"; //equal
+	filter = "company.code==''"; //equal to empty string
+	filter = "company.code==dem*"; //like dem%
+	filter = "company.code==*emo"; //like %emo
+	filter = "company.code==*em*"; //like %em%
+	filter = "company.code==^*EM*"; //ignore case like %EM%
+	filter = "company.code=='^*EM*'"; //ignore case like %EM%
+	filter = "company.code!=demo"; //not equal
+	filter = "company.code=in=(*)"; //equal to *
+	filter = "company.code=in=(^)"; //equal to ^
+	filter = "company.code=in=(demo,real)"; //in
+	filter = "company.code=out=(demo,real)"; //not in
+	filter = "company.id=gt=100"; //greater than
+	filter = "company.id=lt=100"; //less than
+	filter = "company.id=ge=100"; //greater than or equal
+	filter = "company.id=le=100"; //less than or equal
+	filter = "company.id>100"; //greater than
+	filter = "company.id<100"; //less than
+	filter = "company.id>=100"; //greater than or equal
+	filter = "company.id<=100"; //less than or equal
+	filter = "company.code=isnull=''"; //is null
+	filter = "company.code=null=''"; //is null
+	filter = "company.code=na=''"; //is null
+	filter = "company.code=nn=''"; //is not null
+	filter = "company.code=notnull=''"; //is not null
+	filter = "company.code=isnotnull=''"; //is not null
+
+	filter = "company.code=='demo';company.id>100"; //and
+	filter = "company.code=='demo' and company.id>100"; //and
+
+	filter = "company.code=='demo',company.id>100"; //or
+	filter = "company.code=='demo' or company.id>100"; //or
