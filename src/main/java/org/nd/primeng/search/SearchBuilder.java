@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -25,45 +26,70 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SearchBuilder {
 	
 	private static Logger logger = LoggerFactory.getLogger(SearchBuilder.class);
-
-
-	public PrimengRequestData parse(String jsonString, Class<?> entityClass) {
-
-		PrimengRequestData requestData = new PrimengRequestData();
-		requestData.setEntityClass(entityClass);
+	
+	private ObjectMapper mapper = new ObjectMapper();
+	
+	public PrimengRequestData process(String jsonString, Class<?> entityClass, String... fieldsOfGlobalFilter) {
 		
-		ObjectMapper mapper = new ObjectMapper();
+		PrimengRequestData requestData = new PrimengRequestData();
+ 		
+		ParsingResult parsingResult = this.parse(jsonString);
+		Pageable pageSettings = this.buildPageable(parsingResult);
+		requestData.setPageSettings(pageSettings);
+		
+		String rsqlQuery = null;
+		if (parsingResult.isGeneralFiltering()) {
+			rsqlQuery = this.buildGlobalFilterQuery(parsingResult, fieldsOfGlobalFilter);
+		}else if (parsingResult.isColumnsFiltering()) {
+			rsqlQuery = this.buildFiltersQuery(parsingResult, entityClass);
+		}
+		requestData.setRsqlQuery(rsqlQuery);
+		
+		return requestData;
+	}
+
+
+	public ParsingResult parse(String jsonString) {
+
+		ParsingResult parsingResult = new ParsingResult();		
 
 		try {
 
 			JsonNode json = mapper.readTree(jsonString);
+			
+			//start index
 			int first = json.get("first").asInt();
-			requestData.setStartIndex(first);
-
+			parsingResult.setStartIndex(first);
+			
+			//rows per page langth
 			int rows = json.get("rows").asInt();
-			requestData.setPageLength(rows);
-
-			JsonNode node = json.get("sortField");
-			if (node != null) {
-				String sortField = node.textValue();
-				if (sortField != null) {
-					requestData.setSortingColumnName(sortField);
-				}
-
+			parsingResult.setPageLength(rows);
+			
+			//sorting field
+			String sortingColumnName = null;
+			JsonNode node = json.get("sortField");			
+			if (node != null) {				
+				sortingColumnName = node.textValue();
 			}
-
+			
+			//sorting order
 			int sortOrder = json.get("sortOrder").asInt();
-			if (sortOrder == 1)
-				requestData.setSortingDirection(Direction.ASC);
-			if (sortOrder == -1)
-				requestData.setSortingDirection(Direction.DESC);
-
+			
+			//build sort
+			if (sortOrder == 1 && sortingColumnName != null)
+				parsingResult.setSort(Sort.by(Direction.ASC, sortingColumnName));
+			if (sortOrder == -1 && sortingColumnName != null)
+				parsingResult.setSort(Sort.by(Direction.DESC, sortingColumnName));
+			
+			
+			//global filter
 			node = json.get("globalFilter");
 			if (node != null) {
 				String globalFilter = node.textValue();
-				requestData.setGeneralFilter(globalFilter);
+				parsingResult.setGeneralFilter(globalFilter);
 			}
-
+			
+			//columns filters
 			JsonNode filters = json.get("filters");
 			Iterator<Map.Entry<String, JsonNode>> iter = filters.fields();
 			while (iter.hasNext()) {
@@ -71,7 +97,7 @@ public class SearchBuilder {
 				String columnName = entry.getKey();
 				if (!columnName.equals("global")) {
 					String valueToSearch = entry.getValue().get("value").asText();
-					requestData.getColumnsFilters().put(columnName, valueToSearch);
+					parsingResult.getColumnsFilters().put(columnName, valueToSearch);
 				}
 			}
 
@@ -79,35 +105,35 @@ public class SearchBuilder {
 			return null;
 		}
 
-		return requestData;
+		return parsingResult;
 	}
 
-	public Pageable buildPageable(PrimengRequestData requestData) {
+	public Pageable buildPageable(ParsingResult parsingResult) {
 
-		Pageable pageSettings = PageRequest.of(requestData.getPage(), requestData.getPageLength());
+		Pageable pageSettings = null;
 
-		if (requestData.getSpringSort() != null) {
-			pageSettings = PageRequest.of(requestData.getPage(), requestData.getPageLength(),
-					requestData.getSpringSort());
+		if (parsingResult.getSort() != null) {
+			pageSettings = PageRequest.of(parsingResult.getPage(), parsingResult.getPageLength(),
+					parsingResult.getSort());
+		}else {
+			pageSettings = PageRequest.of(parsingResult.getPage(), parsingResult.getPageLength());
 		}
 
 		return pageSettings;
 
 	}
 	
-	public String buildFiltersQuery(PrimengRequestData requestData) {
+	public String buildFiltersQuery(ParsingResult parsingResult, Class<?> entityClass) {
 
 		String rsqlQuery = null;
 		List<String> queries = new ArrayList<String>();
-		
-		Class<?> entityClass = requestData.getEntityClass();
 
-		for (String fieldName : requestData.getColumnsFilters().keySet()) {
-			String valueToSearch = requestData.getColumnsFilters().get(fieldName);
+		for (String fieldName : parsingResult.getColumnsFilters().keySet()) {
+			String valueToSearch = parsingResult.getColumnsFilters().get(fieldName);
 			
 			Class<?> fieldType = ReflectionUtils.findField(entityClass, fieldName).getType();
 			
-			if(fieldType != null && fieldType.equals(LocalDateTime.class)) {
+			if(fieldType.equals(LocalDateTime.class)) {
 
 				try {
 					
@@ -173,14 +199,14 @@ public class SearchBuilder {
 
 	}
 
-	public String buildGlobalFilterQuery(PrimengRequestData requestData, String... fieldsToApply) {
+	public String buildGlobalFilterQuery(ParsingResult parsingResult, String... fieldsOfGlobalFilter) {
 		
-		String valueToSearch = requestData.getGeneralFilter();
+		String valueToSearch = parsingResult.getGeneralFilter();
 		
 		String rsqlQuery = null;
 		List<String> queries = new ArrayList<String>();
 
-		for (String fieldName : fieldsToApply) {
+		for (String fieldName : fieldsOfGlobalFilter) {
 			String query = fieldName.concat("==^*").concat(valueToSearch).concat("*");
 			queries.add(query);
 

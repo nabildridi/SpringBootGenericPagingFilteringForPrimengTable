@@ -8,7 +8,6 @@ import org.nd.primeng.search.PrimengRequestData;
 import org.nd.primeng.search.SearchBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import io.github.perplexhub.rsql.RSQLSupport;
@@ -23,22 +22,12 @@ public class UserService {
 	private SearchBuilder searchBuilder;
 
 	public Page<User> filterUsers(String json) {
-		PrimengRequestData requestData = searchBuilder.parse(json, User.class);
+		PrimengRequestData requestData = searchBuilder.process(json, User.class, "username", "email");
 
-		Pageable pageSettings = searchBuilder.buildPageable(requestData);
-
-		String rsqlQuery = null;
-		if (requestData.isColumnsFiltering()) {
-			rsqlQuery = searchBuilder.buildFiltersQuery(requestData);
-		}
-		if (requestData.isGeneralFiltering()) {
-			rsqlQuery = searchBuilder.buildGlobalFilterQuery(requestData, "username", "email");
-		}
-
-		if (rsqlQuery == null) {
-			return userDao.findAll(pageSettings);
+		if (requestData.getRsqlQuery() == null) {
+			return userDao.findAll(requestData.getPageSettings());
 		} else {
-			return userDao.findAll(RSQLSupport.toSpecification(rsqlQuery), pageSettings);
+			return userDao.findAll(RSQLSupport.toSpecification( requestData.getRsqlQuery() ), requestData.getPageSettings());
 		}
 	}
 
