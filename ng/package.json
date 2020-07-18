@@ -26,7 +26,7 @@
     "primeng": "8.0.3",
     "primeicons": "2.0.0",
     "primeflex": "1.0.0-rc.1",
-    "lodash": "4.17.15"
+    "lodash": "4.17.19"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.4",
