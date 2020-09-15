@@ -1,7 +1,7 @@
 package org.nd.primeng.controller;
 
 import org.nd.primeng.model.User;
-import org.nd.primeng.services.UserService;
+import org.nd.primeng.services.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +16,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class Controller {
+public class UsersController {
 
-	private static Logger logger = LoggerFactory.getLogger(Controller.class);
+	private static Logger logger = LoggerFactory.getLogger(UsersController.class);
 
 	@Autowired
-	private UserService filteringService;
+	private UsersService usersService;
 
 	@RequestMapping(value = "/paginate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Page<User> paginate(@RequestBody String json) {
+	public Page<User> paginate(@RequestBody String primengRequestJson) {
 
 		logger.info("----------------------------------------------------------------------");
-		logger.info(json);
+		logger.info(primengRequestJson);
 		logger.info("----------------------------------------------------------------------");
 
-		return filteringService.filterUsers(json);
+		return usersService.processPrimengRequest(primengRequestJson);
 	}
 
 }

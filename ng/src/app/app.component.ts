@@ -2,24 +2,20 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LazyLoadEvent } from 'primeng/api';
 
-
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-
-
   columnsDefs = [
-    { field: 'id', header: 'Id', sortable: false, searchable: true, type: "number" },
+    { field: 'id', header: 'Id', sortable: true, searchable: true, type: "number" },
     { field: 'username', header: 'Username', sortable: true, searchable: true, type: "string" },
-    { field: 'firstname', header: 'FirstName', sortable: false, searchable: false, type: "string" },
+    { field: 'firstname', header: 'FirstName', sortable: true, searchable: true, type: "string" },
     { field: 'lastname', header: 'LastName', sortable: true, searchable: true, type: "string" },
-    { field: 'email', header: 'Email', sortable: false, searchable: false, type: "string" },
-    { field: 'accessdate', header: 'date', sortable: false, searchable: true, type: "date" },
-    { field: 'modifdate', header: 'search with range', sortable: false, searchable: true, type: "range" }
+    { field: 'email', header: 'Email', sortable: true, searchable: true, type: "string" },
+    { field: 'accessdate', header: 'date', sortable: true, searchable: true, type: "date" },
+    { field: 'modifdate', header: 'search with range', sortable: true, searchable: true, type: "range" }
   ];
 
   settings = {
@@ -58,7 +54,4 @@ export class AppComponent {
     );
 
   }
-
-
 }
-

@@ -1,7 +1,8 @@
 <p-table #dt [columns]="columnsDefs" [value]="data" [lazy]="true" (onLazyLoad)="loadFromServer($event)"
   [paginator]="true" [rows]="settings.rowsPerPage" [totalRecords]="totalRecords"
   [sortField]="settings.defaultSort ? settings.defaultSort.field : null"
-  [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1">
+  [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1"
+  sortMode="multiple">
 
   <ng-template pTemplate="caption" *ngIf="settings.globalFilter">
     <div style="text-align: right">
@@ -13,7 +14,7 @@
 
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.sortable">
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="col.sortable===false">
         {{col.header}}
         <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
       </th>

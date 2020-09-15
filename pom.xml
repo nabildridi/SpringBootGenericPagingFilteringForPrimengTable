@@ -6,13 +6,13 @@
 
 	<groupId>org.nd</groupId>
 	<artifactId>SpringBootGenericPagingFilteringForPrimengTable</artifactId>
-	<version>1.0.1</version>
+	<version>2.0.0</version>
 	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.6.RELEASE</version>
+		<version>2.3.3.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -48,17 +48,16 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>io.github.perplexhub</groupId>
 			<artifactId>rsql-jpa-specification</artifactId>
-			<version>4.0.9</version>
+			<version>5.0.6</version>
 		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.17</version>
 		</dependency>
 
 

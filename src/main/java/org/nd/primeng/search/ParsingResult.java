@@ -4,15 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 
 public class ParsingResult {
 	
 	private Integer startIndex;
 	private Integer pageLength;	
-	
-	public Sort sort;
-	
 
 	private Map<String, String> columnsFilters = new HashMap<String, String>();
 	private String generalFilter;
@@ -43,12 +41,6 @@ public class ParsingResult {
 	public void setColumnsFilters(Map<String, String> columnsFilters) {
 		this.columnsFilters = columnsFilters;
 	}
-	public Sort getSort() {
-		return sort;
-	}
-	public void setSort(Sort sort) {
-		this.sort = sort;
-	}
 	
 	
 	public boolean isGeneralFiltering() {
@@ -69,7 +61,6 @@ public class ParsingResult {
 	public int getPage() {
 			return startIndex/pageLength;		
 	}
-
-
+	
 	
 }

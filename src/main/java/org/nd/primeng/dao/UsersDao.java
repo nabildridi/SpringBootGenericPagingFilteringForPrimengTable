@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import org.nd.primeng.model.User;
 
 @Repository
-public interface UserDao extends JpaRepository<User, Long>, JpaSpecificationExecutor<User>, QuerydslPredicateExecutor<User> {
+public interface UsersDao extends JpaRepository<User, Long>, JpaSpecificationExecutor<User>, QuerydslPredicateExecutor<User> {
 	
 }
