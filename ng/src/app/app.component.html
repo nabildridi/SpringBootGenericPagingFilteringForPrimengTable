@@ -1,13 +1,16 @@
 <p-table #dt [columns]="columnsDefs" [value]="data" [lazy]="true" (onLazyLoad)="loadFromServer($event)"
   [paginator]="true" [rows]="settings.rowsPerPage" [totalRecords]="totalRecords"
   [sortField]="settings.defaultSort ? settings.defaultSort.field : null"
-  [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1"
-  sortMode="multiple">
+  [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1">
 
   <ng-template pTemplate="caption" *ngIf="settings.globalFilter">
-    <div style="text-align: right">
-      <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
-      <input type="text" pInputText size="50" (input)="dt.filterGlobal($event.target.value)" style="width:auto">
+    <div class="p-d-flex p-jc-end">  
+
+      <span class="p-input-icon-left">
+        <i class="pi pi-search" ></i>
+        <input type="text" pInputText size="50" (input)="dt.filterGlobal($event.target.value)">     
+      </span>
+
     </div>
   </ng-template>
 
