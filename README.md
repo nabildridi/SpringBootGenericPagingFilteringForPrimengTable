@@ -23,6 +23,7 @@ The two most important java classes in this project are :
  - **org.nd.primeng.search.PrimengRequestData** : a bean to hold the data parsed from the PrimeNg table request
  - **org.nd.primeng.search.SearchBuilder** : responsible for parsing the PrimeNg table json request, generating the paging and sorting jpa query and building an Rsql query from the filters
  - Please refer to the class **org.nd.primeng.services.UserService** for an example to how to use those classes
+ - Your repository class needs to extends **JpaSpecificationExecutor<Class>** and **QuerydslPredicateExecutor<Class>**, please refer to UsersDao class for an example
 
  This project uses **[rsql-jpa-specification](https://github.com/perplexhub/rsql-jpa-specification)** to work, please refer to its documentation to see how the intial setup is done.
 
@@ -49,5 +50,5 @@ In order to properly  filter against date columns, you need to do two things :
 ```
 
  - Run the Spring boot project
- - Run the Angular 8 project
+ - Run the Angular 10 project
 
