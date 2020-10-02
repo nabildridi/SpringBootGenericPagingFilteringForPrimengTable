@@ -10,7 +10,7 @@ The goal of the this project is to make this server side processing the most gen
 
 ## Structure of the project
 
- - The 'ng' folder contains the sample front-end Angular 8 project
+ - The 'ng' folder contains the sample front-end Angular 10 project
  - The Spring Boot project is a minimal showcase and can be used as a base for other projects, it contains : a sample entity, dao, controller and service and two core classes responsible of building queries
 
 ## How it works
