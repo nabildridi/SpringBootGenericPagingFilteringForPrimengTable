@@ -227,7 +227,7 @@ public class SearchBuilder {
 				} catch (Exception e) {e.printStackTrace();}
 			}
 			else if(fieldType.equals(String.class)) {
-				String query = fieldName.concat("==^*").concat(valueToSearch).concat("*");
+				String query = fieldName.concat("=='^*").concat(valueToSearch).concat("*'");
 				queries.add(query);
 			}
 			else {
@@ -254,7 +254,7 @@ public class SearchBuilder {
 		List<String> queries = new ArrayList<String>();
 
 		for (String fieldName : fieldsOfGlobalFilter) {
-			String query = fieldName.concat("==^*").concat(valueToSearch).concat("*");
+			String query = fieldName.concat("=='^*").concat(valueToSearch).concat("*'");
 			queries.add(query);
 
 		}
