@@ -220,10 +220,10 @@ public class SearchBuilder {
 					
 
 
-					String query = fieldName.concat(">='").concat(start.toString()).concat("'");;
+					String query = fieldName.concat(">='").concat(start.toString()).concat("'");
 					queries.add(query);
 					
-					query = fieldName.concat("<='").concat(end.toString()).concat("'");;
+					query = fieldName.concat("<='").concat(end.toString()).concat("'");
 					queries.add(query);
 					
 				} catch (Exception e) {e.printStackTrace();}
