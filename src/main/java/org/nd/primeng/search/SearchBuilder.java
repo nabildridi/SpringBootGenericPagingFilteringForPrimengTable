@@ -178,6 +178,8 @@ public class SearchBuilder {
 		for (String fieldName : parsingResult.getColumnsFilters().keySet()) {
 			String valueToSearch = parsingResult.getColumnsFilters().get(fieldName);
 			
+			valueToSearch = valueToSearch.replaceAll("'", "").replaceAll("\\\\", "");
+			
 			Class<?> fieldType = ReflectionUtils.findField(entityClass, fieldName).getType();
 			
 			if(fieldType.equals(LocalDateTime.class)) {
@@ -218,10 +220,10 @@ public class SearchBuilder {
 					
 
 
-					String query = fieldName.concat(">=").concat(start.toString());
+					String query = fieldName.concat(">='").concat(start.toString()).concat("'");;
 					queries.add(query);
 					
-					query = fieldName.concat("<=").concat(end.toString());
+					query = fieldName.concat("<='").concat(end.toString()).concat("'");;
 					queries.add(query);
 					
 				} catch (Exception e) {e.printStackTrace();}
@@ -231,7 +233,7 @@ public class SearchBuilder {
 				queries.add(query);
 			}
 			else {
-				String query = fieldName.concat("==").concat(valueToSearch);
+				String query = fieldName.concat("=='").concat(valueToSearch).concat("'");
 				queries.add(query);
 			}
 			
@@ -249,6 +251,8 @@ public class SearchBuilder {
 	private String buildGlobalFilterQuery(ParsingResult parsingResult, String... fieldsOfGlobalFilter) {
 		
 		String valueToSearch = parsingResult.getGeneralFilter();
+		
+		valueToSearch = valueToSearch.replaceAll("'", "").replaceAll("\\\\", "");
 		
 		String rsqlQuery = null;
 		List<String> queries = new ArrayList<String>();
