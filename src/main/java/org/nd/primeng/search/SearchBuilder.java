@@ -180,6 +180,8 @@ public class SearchBuilder {
 			
 			Class<?> fieldType = ReflectionUtils.findField(entityClass, fieldName).getType();
 			
+			valueToSearch = escapeSpecialChars(valueToSearch);
+			
 			if(fieldType.equals(LocalDateTime.class)) {
 
 				try {
@@ -227,7 +229,7 @@ public class SearchBuilder {
 				} catch (Exception e) {e.printStackTrace();}
 			}
 			else if(fieldType.equals(String.class)) {
-				String query = fieldName.concat("=='^*").concat(valueToSearch).concat("*'");
+				String query = fieldName.concat("==\"^*").concat(valueToSearch).concat("*\"");
 				queries.add(query);
 			}
 			else {
@@ -250,11 +252,13 @@ public class SearchBuilder {
 		
 		String valueToSearch = parsingResult.getGeneralFilter();
 		
+		valueToSearch = escapeSpecialChars(valueToSearch);
+		
 		String rsqlQuery = null;
 		List<String> queries = new ArrayList<String>();
 
 		for (String fieldName : fieldsOfGlobalFilter) {
-			String query = fieldName.concat("=='^*").concat(valueToSearch).concat("*'");
+			String query = fieldName.concat("==\"^*").concat(valueToSearch).concat("*\"");
 			queries.add(query);
 
 		}
@@ -265,5 +269,18 @@ public class SearchBuilder {
 
 		return rsqlQuery;
 
+	}
+	
+	private String escapeSpecialChars(String valueToSearch) {
+				
+		String[] specialChars = {"\"", "'"};
+		for(String special : specialChars) {
+			valueToSearch = valueToSearch.replace(special, "\\".concat(special));
+		}
+		
+		valueToSearch = valueToSearch.replace("\\", "\\\\\\\\");
+		
+		return valueToSearch;
+		
 	}
 }
