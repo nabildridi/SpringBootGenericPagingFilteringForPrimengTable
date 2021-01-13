@@ -272,13 +272,13 @@ public class SearchBuilder {
 	}
 	
 	private String escapeSpecialChars(String valueToSearch) {
-				
-		String[] specialChars = {"\"", "'"};
-		for(String special : specialChars) {
-			valueToSearch = valueToSearch.replace(special, "\\".concat(special));
-		}
 		
 		valueToSearch = valueToSearch.replace("\\", "\\\\\\\\");
+		
+		String[] specialChars = {"'"};
+		for(String special : specialChars) {
+			valueToSearch = valueToSearch.replace(special, "\\".concat(special));
+		}		
 		
 		return valueToSearch;
 		
