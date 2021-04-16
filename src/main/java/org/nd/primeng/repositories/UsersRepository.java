@@ -1,4 +1,4 @@
-package org.nd.primeng.dao;
+package org.nd.primeng.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import org.nd.primeng.model.User;
 
 @Repository
-public interface UsersDao extends JpaRepository<User, Long>, JpaSpecificationExecutor<User>, QuerydslPredicateExecutor<User> {
+public interface UsersRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User>, QuerydslPredicateExecutor<User> {
 	
 }

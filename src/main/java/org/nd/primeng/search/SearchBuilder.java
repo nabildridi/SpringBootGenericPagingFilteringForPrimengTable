@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.github.perplexhub.rsql.RSQLJPASupport;
 
 @Service
 public class SearchBuilder {
@@ -31,9 +34,12 @@ public class SearchBuilder {
 		
 		PrimengQueries requestData = new PrimengQueries();
 		
+		//to json object
 		JsonNode primengRequestNode = toJsonNode(primengRequestJson);
  		
 		ParsingResult parsingResult = this.parse(primengRequestNode);
+		
+		//build pagination data
 		Pageable pageQuery = this.buildPageable(parsingResult);
 		requestData.setPageQuery(pageQuery);
 		
@@ -43,15 +49,32 @@ public class SearchBuilder {
 		
 		//build filtering query
 		String rsqlQuery = null;
-		if (parsingResult.isGeneralFiltering()) {
+		if (parsingResult.isGeneralFiltering() && fieldsOfGlobalFilter != null) {
 			rsqlQuery = this.buildGlobalFilterQuery(parsingResult, fieldsOfGlobalFilter);
 		}else if (parsingResult.isColumnsFiltering()) {
-			rsqlQuery = this.buildFiltersQuery(parsingResult, entityClass);
+			rsqlQuery = this.buildFiltersQuery(parsingResult);
 		}
-		
+	
+		if(rsqlQuery==null)rsqlQuery="";
 		requestData.setRsqlQuery(rsqlQuery);	
 		
+		Specification<?> spec = getSpec(entityClass, rsqlQuery, sortQuery);
+		requestData.setSpec(spec);
+		
+		
 		return requestData;
+	}
+	
+	private <T> Specification<T> getSpec(Class<T> clazz, String rsqlQuery, String sortQuery) {
+		   
+			Specification<T> spec = null;
+		   if (rsqlQuery == null) {
+				spec = RSQLJPASupport.toSort(sortQuery);
+			} else {
+				spec = (Specification<T>) RSQLJPASupport.toSpecification(rsqlQuery).and(RSQLJPASupport.toSort(sortQuery));
+			}
+		   
+		   return spec;
 	}
 	
 	private JsonNode toJsonNode(String primengRequestJson) {
@@ -94,10 +117,45 @@ public class SearchBuilder {
 			while (iter.hasNext()) {
 				Map.Entry<String, JsonNode> entry = iter.next();
 				String columnName = entry.getKey();
-				if (!columnName.equals("global")) {
-					String valueToSearch = entry.getValue().get("value").asText();
-					parsingResult.getColumnsFilters().put(columnName, valueToSearch);
+				JsonNode filterNode = entry.getValue();
+				
+				List<ColumnFilter> filtersOfField = new ArrayList<ColumnFilter>();
+				
+				
+				
+				if (!columnName.equals("global")) {	
+					
+					
+					
+					
+					if(filterNode.isArray()) {
+						
+						Iterator<JsonNode> rulesIter = filterNode.iterator();
+						while (rulesIter.hasNext()) {
+							JsonNode ruleEntry = rulesIter.next();
+							
+							if(!ruleEntry.get("value").isNull()) {
+								ColumnFilter columnFilter = extractFilterData(ruleEntry);
+								filtersOfField.add(columnFilter);
+							}
+						}
+						
+					}
+					
+					if(filterNode.isObject()) {						
+						
+						if(!filterNode.get("value").isNull()) {
+							ColumnFilter columnFilter = extractFilterData(filterNode);
+							filtersOfField.add(columnFilter);
+						}				
+						
+					}
+					
+					parsingResult.getColumnsFilters().put(columnName, filtersOfField);
+					
 				}
+				
+				
 			}
 
 		} catch (Exception e) {
@@ -156,8 +214,7 @@ public class SearchBuilder {
 		}
 		
 		String sortQuery = StringUtils.collectionToDelimitedString(queries, ";");
-		
-		logger.debug(sortQuery);
+
 		return sortQuery;
 	}
 	
@@ -170,84 +227,63 @@ public class SearchBuilder {
 
 	}
 	
-	private String buildFiltersQuery(ParsingResult parsingResult, Class<?> entityClass) {
+	private String buildFiltersQuery(ParsingResult parsingResult) {
 
 		String rsqlQuery = null;
 		List<String> queries = new ArrayList<String>();
 
 		for (String fieldName : parsingResult.getColumnsFilters().keySet()) {
-			String valueToSearch = parsingResult.getColumnsFilters().get(fieldName);
 			
-			Class<?> fieldType = ReflectionUtils.findField(entityClass, fieldName).getType();
+			List<ColumnFilter> ColumnFiltersList = parsingResult.getColumnsFilters().get(fieldName);
 			
-			valueToSearch = escapeSpecialChars(valueToSearch);
-			
-			if(fieldType.equals(LocalDateTime.class)) {
-
-				try {
-					
-					LocalDateTime  start = null;
-					LocalDateTime  end = null;
-					
-					if(valueToSearch.contains("-")) {
-						//this is a date range search
-						String[] rangeDates = valueToSearch.split("-");
-						
-						long timeStamp = Long.parseLong(rangeDates[0]);
-						LocalDateTime  dateTime = LocalDateTime.ofInstant(
-								Instant.ofEpochMilli(timeStamp), 
-								TimeZone.getDefault().toZoneId()
-				        );
-						start = dateTime.with(LocalTime.of(0, 0, 0, 0));
-						
-						timeStamp = Long.parseLong(rangeDates[1]);
-						dateTime = LocalDateTime.ofInstant(
-								Instant.ofEpochMilli(timeStamp), 
-								TimeZone.getDefault().toZoneId()
-				        );
-						end = dateTime.with(LocalTime.of(23, 59, 59, 999));
-					}else {
-						
-						//this a one day search						
-						LocalDateTime  dateTime = LocalDateTime.ofInstant(
-								Instant.ofEpochMilli(Long.parseLong(valueToSearch) ), 
-								TimeZone.getDefault().toZoneId()
-				        );  
+			if(ColumnFiltersList.size() == 1) {
+				ColumnFilter cf = ColumnFiltersList.get(0);
+				String rsqlFragment = getRsqlFragmentForMatchMode(cf.getMatchMode(), cf.getType());
 				
-						start = dateTime.with(LocalTime.of(0, 0, 0, 0));
-						end = dateTime.with(LocalTime.of(23, 59, 59, 999));
-					}
-					
-
-
-					String query = fieldName.concat(">=").concat(start.toString());
+				if(cf.getType() != ColumnType.DATE) {
+					rsqlFragment = rsqlFragment.replace("[placeholder]", cf.getValueToSearch());
+					String query = fieldName + rsqlFragment; 
 					queries.add(query);
-					
-					query = fieldName.concat("<=").concat(end.toString());
+				}else {
+					String query = getDatesQuery(cf, rsqlFragment, fieldName); 
 					queries.add(query);
-					
-				} catch (Exception e) {e.printStackTrace();}
-			}
-			else if(fieldType.equals(String.class)) {
-				String query = fieldName.concat("==\"^*").concat(valueToSearch).concat("*\"");
-				queries.add(query);
-			}
-			else {
-				String query = fieldName.concat("==").concat(valueToSearch);
-				queries.add(query);
+				}
+				
 			}
 			
+			if(ColumnFiltersList.size() > 1) {
+				String localOperator = ColumnFiltersList.get(0).getOperator();
+				List<String> groupedQueries = new ArrayList<String>();
+				
+				for(ColumnFilter cf : ColumnFiltersList) {
+					String rsqlFragment = getRsqlFragmentForMatchMode(cf.getMatchMode(), cf.getType());
 
+					if(cf.getType() != ColumnType.DATE) {
+						rsqlFragment = rsqlFragment.replace("[placeholder]", cf.getValueToSearch());
+						String query = fieldName + rsqlFragment; 
+						groupedQueries.add(query);
+					}else {
+						String query = getDatesQuery(cf, rsqlFragment, fieldName); 
+						groupedQueries.add(query);
+					}
+				}
+				
+				String localQuery  = "(" + StringUtils.collectionToDelimitedString(groupedQueries, " " + localOperator+ " ") + ")";
+				queries.add(localQuery);
+
+			}
+			
+			
+			
 		}
-
+		
 		if (queries.size() > 0) {
 			rsqlQuery = StringUtils.collectionToDelimitedString(queries, " and ");
 		}
-
+		
 		return rsqlQuery;
-
 	}
-
+	
 	private String buildGlobalFilterQuery(ParsingResult parsingResult, String... fieldsOfGlobalFilter) {
 		
 		String valueToSearch = parsingResult.getGeneralFilter();
@@ -283,4 +319,107 @@ public class SearchBuilder {
 		return valueToSearch;
 		
 	}
+	
+	private ColumnType findType(JsonNode valueNode) {
+		
+		if(valueNode.isNumber())return ColumnType.NUMERIC;
+		if(valueNode.isTextual()) {
+			String value = valueNode.textValue();
+			
+			try {
+				Date.from( Instant.parse( value ));
+				
+				return ColumnType.DATE;
+			} catch (Exception e) {
+				return ColumnType.TEXT;
+			}
+			
+		}	
+		
+	    return ColumnType.TEXT;    
+	}
+	
+	
+	private String getDatesQuery(ColumnFilter cf, String rsqlFragment, String fieldName) {
+		
+		LocalDateTime  dateTime = LocalDateTime.ofInstant(
+				Instant.parse( cf.getValueToSearch() ), 
+				TimeZone.getDefault().toZoneId()
+        );  
+
+		LocalDateTime start = dateTime.with(LocalTime.of(0, 0, 0, 0));
+		LocalDateTime end = dateTime.with(LocalTime.of(23, 59, 59, 999)); 
+		
+		rsqlFragment = rsqlFragment.replace("[field]", fieldName);
+		rsqlFragment = rsqlFragment.replace("[startDay]", start.toString());
+		rsqlFragment = rsqlFragment.replace("[endDay]", end.toString());				
+		rsqlFragment = fieldName.concat(rsqlFragment);					
+		String query = "(".concat(rsqlFragment).concat(")");
+		
+		return query;
+		
+	}
+	
+	private String getRsqlFragmentForMatchMode(String matchMode, ColumnType type) {
+		
+		String operator = null;
+		
+		if(type == ColumnType.TEXT) {
+			if(matchMode.equals("default"))operator = "==\"^*[placeholder]*\"";
+			if(matchMode.equals("startsWith"))operator = "==\"[placeholder]*\"";
+		    if(matchMode.equals("contains"))operator = "==\"^*[placeholder]*\"";
+		    if(matchMode.equals("notContains"))operator = "!=\"^*[placeholder]*\"";
+		    if(matchMode.equals("endsWith"))operator = "==\"*[placeholder]\"";
+		    if(matchMode.equals("equals"))operator = "==\"[placeholder]\"";
+		    if(matchMode.equals("notEquals"))operator = "!=\"[placeholder]\"";
+		}
+		
+		if(type == ColumnType.NUMERIC) {
+			if(matchMode.equals("default"))operator = "==[placeholder]";
+		    if(matchMode.equals("equals"))operator = "==[placeholder]";
+		    if(matchMode.equals("notEquals"))operator = "!=[placeholder]";
+		    if(matchMode.equals("lt"))operator = "<[placeholder]";
+		    if(matchMode.equals("lte"))operator = "<=[placeholder]";
+		    if(matchMode.equals("gt"))operator = ">[placeholder]";
+		    if(matchMode.equals("gte"))operator = ">=[placeholder]";
+		}
+		
+		if(type == ColumnType.DATE) {
+			if(matchMode.equals("default"))operator = ">=[startDay] and [field]<=[endDay]";
+			if(matchMode.equals("dateIs"))operator = ">=[startDay] and [field]<=[endDay]";
+		    if(matchMode.equals("dateIsNot"))operator = "<[startDay] or [field]>[endDay]";
+		    if(matchMode.equals("dateBefore"))operator = "<[startDay]";
+		    if(matchMode.equals("dateAfter"))operator = ">[endDay]";
+		}
+	    
+	    return operator;
+	    
+	}
+	
+	private ColumnFilter extractFilterData(JsonNode jsonFilter) {
+		
+		ColumnFilter columnFilter = new ColumnFilter();
+
+		String valueToSearch = jsonFilter.get("value").asText();							
+		columnFilter.setValueToSearch(valueToSearch);
+		
+		
+		JsonNode matchModeNode = jsonFilter.get("matchMode");
+		if(matchModeNode != null) {
+			columnFilter.setMatchMode(matchModeNode.asText());
+		}
+		
+		JsonNode operatorNode = jsonFilter.get("operator");
+		if(operatorNode != null) {
+			columnFilter.setOperator(operatorNode.asText());
+		}
+		
+		ColumnType type = findType(jsonFilter.get("value"));
+		columnFilter.setType(type);
+		
+		return columnFilter;
+
+	}
+		
+	
 }

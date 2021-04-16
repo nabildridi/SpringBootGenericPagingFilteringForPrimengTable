@@ -1,10 +1,8 @@
 package org.nd.primeng.search;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 
 
 public class ParsingResult {
@@ -12,7 +10,7 @@ public class ParsingResult {
 	private Integer startIndex;
 	private Integer pageLength;	
 
-	private Map<String, String> columnsFilters = new HashMap<String, String>();
+	private Map<String, List<ColumnFilter>> columnsFilters = new HashMap<String, List<ColumnFilter>>();
 	private String generalFilter;
 		
 
@@ -35,13 +33,12 @@ public class ParsingResult {
 		this.generalFilter = generalFilter;
 	}
 
-	public Map<String, String> getColumnsFilters() {
+	public Map<String, List<ColumnFilter>> getColumnsFilters() {
 		return columnsFilters;
 	}
-	public void setColumnsFilters(Map<String, String> columnsFilters) {
+	public void setColumnsFilters(Map<String, List<ColumnFilter>> columnsFilters) {
 		this.columnsFilters = columnsFilters;
 	}
-	
 	
 	public boolean isGeneralFiltering() {
 		if(generalFilter != null && !generalFilter.isEmpty()) {

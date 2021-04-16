@@ -1,7 +1,11 @@
 
 
 
-# Spring Boot generic paging, sorting and filtering for PrimeNg tables
+# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.0)
+
+## What's new in version 4.0?
+ - Primeng 11 came with many changes in the table component : a date filter was added and the text filter can now have multiple rules, this version take account of those changes
+ - This project is compatible with the table component of both v10 and v11 of Primeng 
 
 ## Goal of the project
 
@@ -10,7 +14,7 @@ The goal of the this project is to make this server side processing the most gen
 
 ## Structure of the project
 
- - The 'ng' folder contains the sample front-end Angular 10 project
+ - The 'ng' folder contains the sample front-end Angular 11 project
  - The Spring Boot project is a minimal showcase and can be used as a base for other projects, it contains : a sample entity, dao, controller and service and two core classes responsible of building queries
 
 ## How it works
@@ -26,6 +30,22 @@ The two most important java classes in this project are :
  - Your repository class needs to extends **JpaSpecificationExecutor<Class>** and **QuerydslPredicateExecutor<Class>**, please refer to UsersDao class for an example
 
  This project uses **[rsql-jpa-specification](https://github.com/perplexhub/rsql-jpa-specification)** to work, please refer to its documentation to see how the intial setup is done.
+ 
+## Two possible methods of use
+
+ - The simplest form : you can use the generated specification with your repository, example :
+ 
+```java
+return usersRepository.findAll((Specification<User>) queries.getSpec(), queries.getPageQuery());
+```
+
+ - Advanced Method : if you need to add a condition to the RSQL query before execution you can use this form, example :
+ 
+```java
+customQuery = queries.getRsqlQuery() + " and name=='John'"
+return usersRepository.findAll(RSQLJPASupport.<User>toSpecification(customQuery).and(RSQLJPASupport.toSort(queries.getSortQuery())), queries.getPageQuery());
+```
+
 
 ## <font color="red">Very important notes about dates filtering</font>
 In order to properly  filter against date columns, you need to do two things :
@@ -50,5 +70,5 @@ In order to properly  filter against date columns, you need to do two things :
 ```
 
  - Run the Spring boot project
- - Run the Angular 10 project
+ - Run the Angular 11 project
 

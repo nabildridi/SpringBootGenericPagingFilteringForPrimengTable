@@ -1,14 +1,15 @@
 <p-table #dt [columns]="columnsDefs" [value]="data" [lazy]="true" (onLazyLoad)="loadFromServer($event)"
   [paginator]="true" [rows]="settings.rowsPerPage" [totalRecords]="totalRecords"
-  [sortField]="settings.defaultSort ? settings.defaultSort.field : null"
-  [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1">
+  [sortField]="settings.defaultSort ? settings.defaultSort.field : ''"
+  [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1"
+  [globalFilterFields]="['name','country.name','representative.name','status']">
 
   <ng-template pTemplate="caption" *ngIf="settings.globalFilter">
-    <div class="p-d-flex p-jc-end">  
+    <div class="p-d-flex p-jc-end">
 
       <span class="p-input-icon-left">
-        <i class="pi pi-search" ></i>
-        <input type="text" pInputText size="50" (input)="dt.filterGlobal($event.target.value)">     
+        <i class="pi pi-search"></i>
+        <input type="text" pInputText size="50" (input)="dt.filterGlobal($any($event.target).value, 'contains')">
       </span>
 
     </div>
@@ -25,16 +26,13 @@
     </tr>
     <tr>
       <th *ngFor="let col of columns">
-        <input *ngIf="col.searchable && col.type==='string'" pInputText type="text"
-          (input)="dt.filter($event.target.value, col.field)">
-        <input *ngIf="col.searchable && col.type==='number'" pInputText type="number"
-          (input)="dt.filter($event.target.value, col.field)">
-        <p-calendar *ngIf="col.searchable && col.type==='date'" (onSelect)="dt.filter($event.getTime(), col.field)"
-          showButtonBar="true" readonlyInput="true" (onClearClick)="dt.filter(null, col.field, null)"></p-calendar>
 
-        <p-calendar #rng *ngIf="col.searchable && col.type==='range'"
-          (onSelect)="dt.filter(makeRange(rng.value), col.field)" selectionMode="range" showButtonBar="true"
-          readonlyInput="true" (onClearClick)="dt.filter(null, col.field, null)"></p-calendar>
+        <p-columnFilter *ngIf="col.searchable && col.type==='string'" type="text" [field]="col.field" display="menu" matchMode="contains"></p-columnFilter>
+
+        <p-columnFilter *ngIf="col.searchable && col.type==='number'" type="numeric" [field]="col.field" display="row"></p-columnFilter>
+
+        <p-columnFilter *ngIf="col.searchable && col.type==='date'" type="date" [field]="col.field" display="row" matchMode="is"></p-columnFilter>
+
       </th>
     </tr>
   </ng-template>
