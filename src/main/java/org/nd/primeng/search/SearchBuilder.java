@@ -54,13 +54,13 @@ public class SearchBuilder {
 		}else if (parsingResult.isColumnsFiltering()) {
 			rsqlQuery = this.buildFiltersQuery(parsingResult);
 		}
-	
-		if(rsqlQuery==null)rsqlQuery="";
-		requestData.setRsqlQuery(rsqlQuery);	
+			
 		
 		Specification<?> spec = getSpec(entityClass, rsqlQuery, sortQuery);
 		requestData.setSpec(spec);
 		
+		if(rsqlQuery==null)rsqlQuery="";
+		requestData.setRsqlQuery(rsqlQuery);
 		
 		return requestData;
 	}
