@@ -400,7 +400,8 @@ public class SearchBuilder {
 		
 		ColumnFilter columnFilter = new ColumnFilter();
 
-		String valueToSearch = jsonFilter.get("value").asText();							
+		String valueToSearch = jsonFilter.get("value").asText();
+		valueToSearch = escapeSpecialChars(valueToSearch);
 		columnFilter.setValueToSearch(valueToSearch);
 		
 		
@@ -420,6 +421,8 @@ public class SearchBuilder {
 		return columnFilter;
 
 	}
+	
+
 		
 	
 }
