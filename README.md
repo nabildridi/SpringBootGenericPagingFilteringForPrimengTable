@@ -3,11 +3,11 @@
 
 # Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.1)
 
-## Changes in version 4.1?
+## Changes in version 4.1
  - Processing of the boolean type filter
  - Changes in the test database and the test java model
  
-## Changes in version 4.0?
+## Changes in version 4.0
  - Primeng 11 came with many changes in the table component : a date filter was added and the text filter can now have multiple rules, this version take account of those changes
  - This project is compatible with the table component of both v10 and v11 of Primeng 
 
