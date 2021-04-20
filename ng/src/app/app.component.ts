@@ -12,11 +12,14 @@ export class AppComponent {
   columnsDefs = [
     { field: 'id', header: 'Id', sortable: true, searchable: true, type: "number" },
     { field: 'username', header: 'Username', sortable: true, searchable: true, type: "string" },
-    { field: 'firstname', header: 'FirstName', sortable: true, searchable: true, type: "string" },
+    //{ field: 'firstname', header: 'FirstName', sortable: true, searchable: true, type: "string" },
     { field: 'lastname', header: 'LastName', sortable: true, searchable: true, type: "string" },
-    { field: 'email', header: 'Email', sortable: true, searchable: true, type: "string" },
+    //{ field: 'email', header: 'Email', sortable: true, searchable: true, type: "string" },
     { field: 'accessdate', header: 'date', sortable: true, searchable: true, type: "date" },
-    { field: 'modified', header: 'boolean', sortable: true, searchable: true, type: "boolean" }
+    { field: 'modified', header: 'boolean', sortable: true, searchable: true, type: "boolean" },
+	{ field: 'account', header: 'Decimal', sortable: true, searchable: true, type: "decimal" }
+
+
   ];
 
   settings = {

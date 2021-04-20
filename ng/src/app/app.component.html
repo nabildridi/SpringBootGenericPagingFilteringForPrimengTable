@@ -29,7 +29,9 @@
 
         <p-columnFilter *ngIf="col.searchable && col.type==='string'" type="text" [field]="col.field" display="menu" matchMode="contains"></p-columnFilter>
 
-        <p-columnFilter *ngIf="col.searchable && col.type==='number'" type="numeric" [field]="col.field" display="row"></p-columnFilter>
+ 		<p-columnFilter *ngIf="col.searchable && col.type==='number'" type="numeric" [field]="col.field" display="row"></p-columnFilter>
+ 
+        <p-columnFilter *ngIf="col.searchable && col.type==='decimal'" type="numeric" [minFractionDigits]="2" [maxFractionDigits]="2" [field]="col.field" display="row"></p-columnFilter>
 
         <p-columnFilter *ngIf="col.searchable && col.type==='date'" type="date" [field]="col.field" display="row" matchMode="is"></p-columnFilter>
         

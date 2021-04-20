@@ -35,6 +35,9 @@ public class User {
     @Column()
     private Boolean modified;
     
+    @Column()
+    private Float account;
+    
 	public long getId() {
 		return id;
 	}
@@ -90,4 +93,12 @@ public class User {
 	public void setModified(Boolean modified) {
 		this.modified = modified;
 	}
+
+	public Float getAccount() {
+		return account;
+	}
+
+	public void setAccount(Float account) {
+		this.account = account;
+	}	
 }
