@@ -436,19 +436,6 @@ public class SearchBuilder {
 
 	}
 
-	private ColumnType validateType(String fieldName, ColumnFilter filter, Class<?> entityClass) {
 
-		Class<?> fieldType = ReflectionUtils.findField(entityClass, fieldName).getType();
-
-		if (fieldType.equals(LocalDateTime.class)) {
-
-		} else if (fieldType.equals(String.class)) {
-		} else if (fieldType.equals(Boolean.class)) {
-		}else {
-		}
-
-		return filter.getType();
-
-	}
 
 }
