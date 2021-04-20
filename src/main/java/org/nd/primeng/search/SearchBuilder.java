@@ -323,6 +323,7 @@ public class SearchBuilder {
 	private ColumnType findType(JsonNode valueNode) {
 		
 		if(valueNode.isNumber())return ColumnType.NUMERIC;
+		if(valueNode.isBoolean())return ColumnType.BOOLEAN;
 		if(valueNode.isTextual()) {
 			String value = valueNode.textValue();
 			
@@ -384,6 +385,11 @@ public class SearchBuilder {
 		    if(matchMode.equals("gte"))operator = ">=[placeholder]";
 		}
 		
+		if(type == ColumnType.BOOLEAN) {
+			if(matchMode.equals("default"))operator = "==[placeholder]";
+		    if(matchMode.equals("equals"))operator = "==[placeholder]";
+		}
+		
 		if(type == ColumnType.DATE) {
 			if(matchMode.equals("default"))operator = ">=[startDay] and [field]<=[endDay]";
 			if(matchMode.equals("dateIs"))operator = ">=[startDay] and [field]<=[endDay]";
@@ -421,6 +427,7 @@ public class SearchBuilder {
 		return columnFilter;
 
 	}
+	
 	
 
 		

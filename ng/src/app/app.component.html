@@ -32,6 +32,8 @@
         <p-columnFilter *ngIf="col.searchable && col.type==='number'" type="numeric" [field]="col.field" display="row"></p-columnFilter>
 
         <p-columnFilter *ngIf="col.searchable && col.type==='date'" type="date" [field]="col.field" display="row" matchMode="is"></p-columnFilter>
+        
+        <p-columnFilter *ngIf="col.searchable && col.type==='boolean'" type="boolean" [field]="col.field" display="row" matchMode="equals"></p-columnFilter>
 
       </th>
     </tr>

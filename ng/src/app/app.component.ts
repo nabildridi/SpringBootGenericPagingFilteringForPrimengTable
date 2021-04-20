@@ -16,7 +16,7 @@ export class AppComponent {
     { field: 'lastname', header: 'LastName', sortable: true, searchable: true, type: "string" },
     { field: 'email', header: 'Email', sortable: true, searchable: true, type: "string" },
     { field: 'accessdate', header: 'date', sortable: true, searchable: true, type: "date" },
-    { field: 'modifdate', header: 'date2', sortable: true, searchable: false, type: "date" }
+    { field: 'modified', header: 'boolean', sortable: true, searchable: true, type: "boolean" }
   ];
 
   settings = {

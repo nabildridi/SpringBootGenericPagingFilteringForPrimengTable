@@ -33,7 +33,7 @@ public class User {
     private LocalDateTime accessdate;
 
     @Column()
-    private LocalDateTime modifdate;
+    private Boolean modified;
     
 	public long getId() {
 		return id;
@@ -83,16 +83,11 @@ public class User {
 		this.accessdate = accessdate;
 	}
 
-	public LocalDateTime getModifdate() {
-		return modifdate;
+	public Boolean getModified() {
+		return modified;
 	}
 
-	public void setModifdate(LocalDateTime modifdate) {
-		this.modifdate = modifdate;
+	public void setModified(Boolean modified) {
+		this.modified = modified;
 	}
-
-	
-
-
-
 }
