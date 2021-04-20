@@ -38,7 +38,7 @@ public class SearchBuilder {
 		// to json object
 		JsonNode primengRequestNode = toJsonNode(primengRequestJson);
 
-		ParsingResult parsingResult = this.parse(primengRequestNode);
+		ParsingResult parsingResult = this.parse(primengRequestNode, entityClass);
 
 		// build pagination data
 		Pageable pageQuery = this.buildPageable(parsingResult);
@@ -51,7 +51,7 @@ public class SearchBuilder {
 		// build filtering query
 		String rsqlQuery = null;
 		if (parsingResult.isGeneralFiltering() && fieldsOfGlobalFilter != null) {
-			rsqlQuery = this.buildGlobalFilterQuery(parsingResult, fieldsOfGlobalFilter);
+			rsqlQuery = this.buildGlobalFilterQuery(parsingResult, entityClass, fieldsOfGlobalFilter);
 		} else if (parsingResult.isColumnsFiltering()) {
 			rsqlQuery = this.buildFiltersQuery(parsingResult);
 		}
@@ -89,7 +89,7 @@ public class SearchBuilder {
 		}
 	}
 
-	private ParsingResult parse(JsonNode primengRequestNode) {
+	private ParsingResult parse(JsonNode primengRequestNode, Class<?> entityClass) {
 
 		ParsingResult parsingResult = new ParsingResult();
 
@@ -129,7 +129,7 @@ public class SearchBuilder {
 							JsonNode ruleEntry = rulesIter.next();
 
 							if (!ruleEntry.get("value").isNull()) {
-								ColumnFilter columnFilter = extractFilterData(ruleEntry);
+								ColumnFilter columnFilter = extractFilterData(ruleEntry, columnName, entityClass);
 								filtersOfField.add(columnFilter);
 							}
 						}
@@ -139,7 +139,7 @@ public class SearchBuilder {
 					if (filterNode.isObject()) {
 
 						if (!filterNode.get("value").isNull()) {
-							ColumnFilter columnFilter = extractFilterData(filterNode);
+							ColumnFilter columnFilter = extractFilterData(filterNode, columnName, entityClass);
 							filtersOfField.add(columnFilter);
 						}
 
@@ -273,7 +273,7 @@ public class SearchBuilder {
 		return rsqlQuery;
 	}
 
-	private String buildGlobalFilterQuery(ParsingResult parsingResult, String... fieldsOfGlobalFilter) {
+	private String buildGlobalFilterQuery(ParsingResult parsingResult, Class<?> entityClass, String... fieldsOfGlobalFilter) {
 
 		String valueToSearch = parsingResult.getGeneralFilter();
 
@@ -283,7 +283,11 @@ public class SearchBuilder {
 		List<String> queries = new ArrayList<String>();
 
 		for (String fieldName : fieldsOfGlobalFilter) {
-			String query = fieldName.concat("==\"^*").concat(valueToSearch).concat("*\"");
+			
+			ColumnType columnType = findType(fieldName, entityClass);
+			String rsqlFragment = getRsqlFragmentForMatchMode("default", columnType);
+			rsqlFragment = rsqlFragment.replace("[placeholder]", valueToSearch);
+			String query = fieldName + rsqlFragment;			
 			queries.add(query);
 
 		}
@@ -309,27 +313,6 @@ public class SearchBuilder {
 
 	}
 
-	private ColumnType findType(JsonNode valueNode) {
-
-		if (valueNode.isNumber())
-			return ColumnType.NUMERIC;
-		if (valueNode.isBoolean())
-			return ColumnType.BOOLEAN;
-		if (valueNode.isTextual()) {
-			String value = valueNode.textValue();
-
-			try {
-				Date.from(Instant.parse(value));
-
-				return ColumnType.DATE;
-			} catch (Exception e) {
-				return ColumnType.TEXT;
-			}
-
-		}
-
-		return ColumnType.TEXT;
-	}
 
 	private String getDatesQuery(ColumnFilter cf, String rsqlFragment, String fieldName) {
 
@@ -411,7 +394,7 @@ public class SearchBuilder {
 
 	}
 
-	private ColumnFilter extractFilterData(JsonNode jsonFilter) {
+	private ColumnFilter extractFilterData(JsonNode jsonFilter, String fieldName, Class<?> entityClass) {
 
 		ColumnFilter columnFilter = new ColumnFilter();
 
@@ -429,13 +412,28 @@ public class SearchBuilder {
 			columnFilter.setOperator(operatorNode.asText());
 		}
 
-		ColumnType type = findType(jsonFilter.get("value"));
+		ColumnType type = findType(fieldName, entityClass);
 		columnFilter.setType(type);
 
 		return columnFilter;
 
 	}
 
+	private ColumnType findType(String fieldName, Class<?> entityClass) {
 
+		Class<?> fieldType = ReflectionUtils.findField(entityClass, fieldName).getType();
+
+		if (fieldType.equals(LocalDateTime.class) || fieldType.equals(Date.class)) {
+			return ColumnType.DATE;
+		} else if (fieldType.equals(String.class)) {
+			return ColumnType.TEXT;
+		} else if (fieldType.equals(Boolean.class)) {
+			return ColumnType.BOOLEAN;
+		}else {
+			return ColumnType.NUMERIC;
+		}
+
+
+	}
 
 }

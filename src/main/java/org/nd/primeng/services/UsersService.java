@@ -23,7 +23,7 @@ public class UsersService {
 	private SearchBuilder searchBuilder;
 
 	public Page<User> processPrimengRequest(String primengRequestJson) {
-		PrimengQueries queries = searchBuilder.process(primengRequestJson, User.class, "username", "email");
+		PrimengQueries queries = searchBuilder.process(primengRequestJson, User.class, "username", "lastname");
 		
 		return usersRepository.findAll((Specification<User>) queries.getSpec(), queries.getPageQuery());	
 		
