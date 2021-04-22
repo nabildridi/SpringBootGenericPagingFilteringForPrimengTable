@@ -1,33 +1,49 @@
-	filter = "company.code==demo"; //equal
-	filter = "company.code=='demo'"; //equal
-	filter = "company.code==''"; //equal to empty string
-	filter = "company.code==dem*"; //like dem%
-	filter = "company.code==*emo"; //like %emo
-	filter = "company.code==*em*"; //like %em%
-	filter = "company.code==^*EM*"; //ignore case like %EM%
-	filter = "company.code=='^*EM*'"; //ignore case like %EM%
-	filter = "company.code!=demo"; //not equal
-	filter = "company.code=in=(*)"; //equal to *
-	filter = "company.code=in=(^)"; //equal to ^
-	filter = "company.code=in=(demo,real)"; //in
-	filter = "company.code=out=(demo,real)"; //not in
-	filter = "company.id=gt=100"; //greater than
-	filter = "company.id=lt=100"; //less than
-	filter = "company.id=ge=100"; //greater than or equal
-	filter = "company.id=le=100"; //less than or equal
-	filter = "company.id>100"; //greater than
-	filter = "company.id<100"; //less than
-	filter = "company.id>=100"; //greater than or equal
-	filter = "company.id<=100"; //less than or equal
-	filter = "company.code=isnull=''"; //is null
-	filter = "company.code=null=''"; //is null
-	filter = "company.code=na=''"; //is null
-	filter = "company.code=nn=''"; //is not null
-	filter = "company.code=notnull=''"; //is not null
-	filter = "company.code=isnotnull=''"; //is not null
+filter = "id=bt=(2,4)";// id>=2 && id<=4 //between
+filter = "id=nb=(2,4)";// id<2 || id>4 //not between
+filter = "company.code=like=em"; //like %em%
+filter = "company.code=ilike=EM"; //ignore case like %EM%
+filter = "company.code=icase=EM"; //ignore case equal EM
+filter = "company.code=notlike=em"; //not like %em%
+filter = "company.code=inotlike=EM"; //ignore case not like %EM%
+filter = "company.code=ke=e*m"; //like %e*m%
+filter = "company.code=ik=E*M"; //ignore case like %E*M%
+filter = "company.code=nk=e*m"; //not like %e*m%
+filter = "company.code=ni=E*M"; //ignore case not like %E*M%
+filter = "company.code=ic=E^^M"; //ignore case equal E^^M
+filter = "company.code==demo"; //equal
+filter = "company.code=='demo'"; //equal
+filter = "company.code==''"; //equal to empty string
+filter = "company.code==dem*"; //like dem%
+filter = "company.code==*emo"; //like %emo
+filter = "company.code==*em*"; //like %em%
+filter = "company.code==^EM"; //ignore case equal EM
+filter = "company.code==^*EM*"; //ignore case like %EM%
+filter = "company.code=='^*EM*'"; //ignore case like %EM%
+filter = "company.code!=demo"; //not equal
+filter = "company.code=in=(*)"; //equal to *
+filter = "company.code=in=(^)"; //equal to ^
+filter = "company.code=in=(demo,real)"; //in
+filter = "company.code=out=(demo,real)"; //not in
+filter = "company.id=gt=100"; //greater than
+filter = "company.id=lt=100"; //less than
+filter = "company.id=ge=100"; //greater than or equal
+filter = "company.id=le=100"; //less than or equal
+filter = "company.id>100"; //greater than
+filter = "company.id<100"; //less than
+filter = "company.id>=100"; //greater than or equal
+filter = "company.id<=100"; //less than or equal
+filter = "company.code=isnull=''"; //is null
+filter = "company.code=null=''"; //is null
+filter = "company.code=na=''"; //is null
+filter = "company.code=nn=''"; //is not null
+filter = "company.code=notnull=''"; //is not null
+filter = "company.code=isnotnull=''"; //is not null
 
-	filter = "company.code=='demo';company.id>100"; //and
-	filter = "company.code=='demo' and company.id>100"; //and
+filter = "company.code=='demo';company.id>100"; //and
+filter = "company.code=='demo' and company.id>100"; //and
 
-	filter = "company.code=='demo',company.id>100"; //or
-	filter = "company.code=='demo' or company.id>100"; //or
+filter = "company.code=='demo',company.id>100"; //or
+filter = "company.code=='demo' or company.id>100"; //or
+	
+			
+String rsql = "createDate=bt=('2018-01-01 12:34:56', '2018-12-31 10:34:56')";

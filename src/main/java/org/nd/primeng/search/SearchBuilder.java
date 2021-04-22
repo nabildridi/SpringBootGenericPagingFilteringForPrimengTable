@@ -228,34 +228,19 @@ public class SearchBuilder {
 
 			if (ColumnFiltersList.size() == 1) {
 				ColumnFilter cf = ColumnFiltersList.get(0);
-				String rsqlFragment = getRsqlFragmentForMatchMode(cf.getMatchMode(), cf.getType());
-
-				if (cf.getType() != ColumnType.DATE) {
-					rsqlFragment = rsqlFragment.replace("[placeholder]", cf.getValueToSearch());
-					String query = fieldName + rsqlFragment;
-					queries.add(query);
-				} else {
-					String query = getDatesQuery(cf, rsqlFragment, fieldName);
-					queries.add(query);
-				}
-
+				String query = getColumnQuery(cf, fieldName);
+				queries.add(query);
 			}
 
+			
 			if (ColumnFiltersList.size() > 1) {
 				String localOperator = ColumnFiltersList.get(0).getOperator();
 				List<String> groupedQueries = new ArrayList<String>();
 
 				for (ColumnFilter cf : ColumnFiltersList) {
-					String rsqlFragment = getRsqlFragmentForMatchMode(cf.getMatchMode(), cf.getType());
-
-					if (cf.getType() != ColumnType.DATE) {
-						rsqlFragment = rsqlFragment.replace("[placeholder]", cf.getValueToSearch());
-						String query = fieldName + rsqlFragment;
-						groupedQueries.add(query);
-					} else {
-						String query = getDatesQuery(cf, rsqlFragment, fieldName);
-						groupedQueries.add(query);
-					}
+					
+					String query = getColumnQuery(cf, fieldName);
+					groupedQueries.add(query);
 				}
 
 				String localQuery = "("
@@ -322,7 +307,6 @@ public class SearchBuilder {
 		LocalDateTime start = dateTime.with(LocalTime.of(0, 0, 0, 0));
 		LocalDateTime end = dateTime.with(LocalTime.of(23, 59, 59, 999));
 
-		rsqlFragment = rsqlFragment.replace("[field]", fieldName);
 		rsqlFragment = rsqlFragment.replace("[startDay]", start.toString());
 		rsqlFragment = rsqlFragment.replace("[endDay]", end.toString());
 		rsqlFragment = fieldName.concat(rsqlFragment);
@@ -337,16 +321,14 @@ public class SearchBuilder {
 		String operator = null;
 
 		if (type == ColumnType.TEXT) {
-			if (matchMode.equals("default"))
-				operator = "==\"^*[placeholder]*\"";
+			if (matchMode.equals("contains") || matchMode.equals("default"))
+				operator = "=ilike=\"[placeholder]\"";
 			if (matchMode.equals("startsWith"))
-				operator = "==\"[placeholder]*\"";
-			if (matchMode.equals("contains"))
-				operator = "==\"^*[placeholder]*\"";
+				operator = "==\"^[placeholder]*\"";
 			if (matchMode.equals("notContains"))
-				operator = "!=\"^*[placeholder]*\"";
+				operator = "=inotlike=\"[placeholder]\"";
 			if (matchMode.equals("endsWith"))
-				operator = "==\"*[placeholder]\"";
+				operator = "==\"^*[placeholder]\"";
 			if (matchMode.equals("equals"))
 				operator = "==\"[placeholder]\"";
 			if (matchMode.equals("notEquals"))
@@ -354,9 +336,7 @@ public class SearchBuilder {
 		}
 
 		if (type == ColumnType.NUMERIC) {
-			if (matchMode.equals("default"))
-				operator = "==[placeholder]";
-			if (matchMode.equals("equals"))
+			if (matchMode.equals("equals") || matchMode.equals("default"))
 				operator = "==[placeholder]";
 			if (matchMode.equals("notEquals"))
 				operator = "!=[placeholder]";
@@ -371,23 +351,19 @@ public class SearchBuilder {
 		}
 
 		if (type == ColumnType.BOOLEAN) {
-			if (matchMode.equals("default"))
-				operator = "==[placeholder]";
-			if (matchMode.equals("equals"))
+			if (matchMode.equals("equals") || matchMode.equals("default"))
 				operator = "==[placeholder]";
 		}
 
 		if (type == ColumnType.DATE) {
-			if (matchMode.equals("default"))
-				operator = ">=[startDay] and [field]<=[endDay]";
-			if (matchMode.equals("dateIs"))
-				operator = ">=[startDay] and [field]<=[endDay]";
+			if (matchMode.equals("dateIs") || matchMode.equals("default"))
+				operator = "=bt=('[startDay]', '[endDay]')";
 			if (matchMode.equals("dateIsNot"))
-				operator = "<[startDay] or [field]>[endDay]";
+				operator = "=nb=('[startDay]', '[endDay]')";;
 			if (matchMode.equals("dateBefore"))
-				operator = "<[startDay]";
+				operator = "<'[startDay]'";
 			if (matchMode.equals("dateAfter"))
-				operator = ">[endDay]";
+				operator = ">'[endDay]'";
 		}
 
 		return operator;
@@ -434,6 +410,22 @@ public class SearchBuilder {
 		}
 
 
+	}
+	
+	private String getColumnQuery(ColumnFilter cf, String fieldName) {
+		
+		String query = null;
+		String rsqlFragment = getRsqlFragmentForMatchMode(cf.getMatchMode(), cf.getType());
+		
+		if (cf.getType() != ColumnType.DATE) {
+			rsqlFragment = rsqlFragment.replace("[placeholder]", cf.getValueToSearch());
+			query = fieldName + rsqlFragment;			
+		} else {
+			query = getDatesQuery(cf, rsqlFragment, fieldName);
+			
+		}
+		
+		return query;
 	}
 
 }
