@@ -3,7 +3,7 @@
 
 # Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.1)
 
-## Changes in version 4.1
+## Changes in version 4.1 (20/04/2021)
  - Processing of the boolean type filter
  - Changes in the test database and the test java model
  
