@@ -66,13 +66,13 @@ public class SearchBuilder {
 		return requestData;
 	}
 
-	private <T> Specification<T> getSpec(Class<T> clazz, String rsqlQuery, String sortQuery) {
+	private <T> Specification<T> getSpec(Class<T> entityClass, String rsqlQuery, String sortQuery) {
 
 		Specification<T> spec = null;
 		if (rsqlQuery == null) {
 			spec = RSQLJPASupport.toSort(sortQuery);
 		} else {
-			spec = (Specification<T>) RSQLJPASupport.toSpecification(rsqlQuery).and(RSQLJPASupport.toSort(sortQuery));
+			spec = RSQLJPASupport.<T>toSpecification(rsqlQuery).and(RSQLJPASupport.toSort(sortQuery));
 		}
 
 		return spec;
