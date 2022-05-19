@@ -1,7 +1,12 @@
 
 
 
-# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.1)
+# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.2)
+
+## Changes in version 4.2 (19/06/2022)
+ - Suppot for multi sort
+ - Angular to 13.3.0 version
+ - Primeng to 13.4.0 version
 
 ## Changes in version 4.1 (20/04/2021)
  - Processing of the boolean type filter

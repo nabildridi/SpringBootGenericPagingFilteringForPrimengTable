@@ -38,16 +38,18 @@ export class AppComponent {
   ngOnInit() { }
 
   loadFromServer(event: LazyLoadEvent) {
-
-    this.http.post("http://localhost:8080" + this.settings.url, event).subscribe(
-      (json : any) => {
-        if (json) {
-          this.data = json["content"];
-          this.totalRecords = json["totalElements"];
-        }
-      },
-      error => { console.log("error"); }
-    );
-
+    this.http
+      .post('http://localhost:8080' + this.settings.url, event)
+      .subscribe({
+        next: (json: any) => {
+          if (json) {
+            this.data = json['content'];
+            this.totalRecords = json['totalElements'];
+          }
+        },
+        error: (e) => {
+          console.log('error');
+        },
+      });
   }
 }

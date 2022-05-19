@@ -1,53 +1,71 @@
-<p-table #dt [columns]="columnsDefs" [value]="data" [lazy]="true" (onLazyLoad)="loadFromServer($event)"
-  [paginator]="true" [rows]="settings.rowsPerPage" [totalRecords]="totalRecords"
+<p-table
+  #dt
+  [columns]="columnsDefs"
+  [value]="data"
+  [lazy]="true"
+  (onLazyLoad)="loadFromServer($event)"
+  [paginator]="true"
+  [rows]="settings.rowsPerPage"
+  [totalRecords]="totalRecords"
   [sortField]="settings.defaultSort ? settings.defaultSort.field : ''"
   [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1"
-  [globalFilterFields]="['name','country.name','representative.name','status']">
-
+  sortMode="multiple"
+  [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+>
   <ng-template pTemplate="caption" *ngIf="settings.globalFilter">
     <div class="p-d-flex p-jc-end">
-
       <span class="p-input-icon-left">
         <i class="pi pi-search"></i>
-        <input type="text" pInputText size="50" (input)="dt.filterGlobal($any($event.target).value, 'contains')">
+        <input type="text" pInputText size="50" (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
       </span>
-
     </div>
   </ng-template>
 
-
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="col.sortable===false">
-        {{col.header}}
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="col.sortable === false">
+        {{ col.header }}
         <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
       </th>
-
     </tr>
     <tr>
       <th *ngFor="let col of columns">
+        <p-columnFilter
+          *ngIf="col.searchable && col.type === 'string'"
+          type="text"
+          [field]="col.field"
+          display="menu"
+          matchMode="contains"
+        ></p-columnFilter>
 
-        <p-columnFilter *ngIf="col.searchable && col.type==='string'" type="text" [field]="col.field" display="menu" matchMode="contains"></p-columnFilter>
+        <p-columnFilter *ngIf="col.searchable && col.type === 'number'" type="numeric" [field]="col.field" display="row"></p-columnFilter>
 
- 		<p-columnFilter *ngIf="col.searchable && col.type==='number'" type="numeric" [field]="col.field" display="row"></p-columnFilter>
- 
-        <p-columnFilter *ngIf="col.searchable && col.type==='decimal'" type="numeric" [minFractionDigits]="2" [maxFractionDigits]="2" [field]="col.field" display="row"></p-columnFilter>
+        <p-columnFilter
+          *ngIf="col.searchable && col.type === 'decimal'"
+          type="numeric"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          [field]="col.field"
+          display="row"
+        ></p-columnFilter>
 
-        <p-columnFilter *ngIf="col.searchable && col.type==='date'" type="date" [field]="col.field" display="row" matchMode="is"></p-columnFilter>
-        
-        <p-columnFilter *ngIf="col.searchable && col.type==='boolean'" type="boolean" [field]="col.field" display="row" matchMode="equals"></p-columnFilter>
+        <p-columnFilter *ngIf="col.searchable && col.type === 'date'" type="date" [field]="col.field" display="row" matchMode="is"></p-columnFilter>
 
+        <p-columnFilter
+          *ngIf="col.searchable && col.type === 'boolean'"
+          type="boolean"
+          [field]="col.field"
+          display="row"
+          matchMode="equals"
+        ></p-columnFilter>
       </th>
     </tr>
   </ng-template>
-
-
-
 
   <ng-template pTemplate="body" let-rowData let-columns="columns">
     <tr>
       <td *ngFor="let col of columns">
-        {{rowData[col.field]}}
+        {{ rowData[col.field] }}
       </td>
     </tr>
   </ng-template>
@@ -55,9 +73,8 @@
   <ng-template pTemplate="emptymessage" let-columns>
     <tr>
       <td [attr.colspan]="columns.length">
-        {{settings.emptyMessage}}
+        {{ settings.emptyMessage }}
       </td>
     </tr>
   </ng-template>
-
 </p-table>
