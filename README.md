@@ -1,8 +1,8 @@
-# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.2)
+# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.2.1)
 
 ## Changes in version 4.2.1 (16/08/2022)
 
-**[fix](https://github.com/nabildridi/SpringBootGenericPagingFilteringForPrimengTable/issues/31)**
+**[fix](https://github.com/nabildridi/SpringBootGenericPagingFilteringForPrimengTable/issues/31)** : Returns empty array when using p-multiSelect
 
 ## Changes in version 4.2 (19/06/2022)
 
