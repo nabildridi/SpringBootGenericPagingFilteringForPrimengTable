@@ -6,7 +6,7 @@
 
 	<groupId>org.nd</groupId>
 	<artifactId>SpringBootGenericPagingFilteringForPrimengTable</artifactId>
-	<version>4.2</version>
+	<version>4.2.1</version>
 	<packaging>jar</packaging>
 
 	<parent>
