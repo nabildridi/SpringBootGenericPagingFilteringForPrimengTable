@@ -10,7 +10,6 @@
   [sortField]="settings.defaultSort ? settings.defaultSort.field : ''"
   [sortOrder]="settings.defaultSort ? settings.defaultSort.order : 1"
   sortMode="multiple"
-  [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
 >
   <ng-template pTemplate="caption" *ngIf="settings.globalFilter">
     <div class="p-d-flex p-jc-end">
@@ -58,6 +57,31 @@
           display="row"
           matchMode="equals"
         ></p-columnFilter>
+
+        <p-columnFilter
+          *ngIf="col.searchable && col.type === 'multiSelect'"
+          [field]="col.field"
+          matchMode="in"
+          display="menu"
+          [showMatchModes]="false"
+          [showOperator]="false"
+          [showAddButton]="false"
+        >
+          <ng-template pTemplate="header">
+            <div class="px-3 pt-3 pb-0">
+              <span class="font-bold">Picker</span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+            <p-multiSelect [options]="usernames" placeholder="Any" (onChange)="filter($event.value)">
+              <ng-template let-option pTemplate="item">
+                <div>
+                  <span class="ml-1">{{ option }}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+          </ng-template>
+        </p-columnFilter>
       </th>
     </tr>
   </ng-template>

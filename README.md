@@ -1,8 +1,20 @@
-# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.2.1)
+# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 4.3)
+
+## Changes in version 4.3 (19/10/2022)
+
+- Maven Java version to 18
+- Removed the use of mysql from this demo application, instead it uses in memory H2 database now
+- Sample data is in **resources/data.sql** file
+- Spring Boot to 2.7.4 version
+- Angular to 14.2.0 version
+- Primeng to 14.1.2 version
 
 ## Changes in version 4.2.1 (16/08/2022)
 
-**[fix](https://github.com/nabildridi/SpringBootGenericPagingFilteringForPrimengTable/issues/31)** : Returns empty array when using p-multiSelect
+- Processing of the boolean type filter
+- Changes in the test database and the test java model
+
+**[fix](https://github.com/nabildridi/SpringBootGenericPagingFilteringForPrimengTable/issues/31)**
 
 ## Changes in version 4.2 (19/06/2022)
 
