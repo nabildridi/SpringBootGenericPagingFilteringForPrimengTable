@@ -1,12 +1,11 @@
-import { Component } from "@angular/core";
-
+import { Component } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { LazyLoadEvent } from "primeng/api";
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
   columnsDefs = [
@@ -38,7 +37,7 @@ export class AppComponent {
     this.usernames = ["Dexter Dridi", "Aggi", "Kai"];
   }
 
-  loadFromServer(event: LazyLoadEvent) {
+  loadFromServer(event: TableLazyLoadEvent) {
     this.http.post("http://localhost:8080" + this.settings.url, event).subscribe({
       next: (json: any) => {
         if (json) {
