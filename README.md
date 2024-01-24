@@ -53,8 +53,6 @@ In order to properly filter against date columns, you need to do two things :
 
 ## Run the project
 
-- Create a database in mysql with name : **app_db**
-- Execute the sample data sql file **/db/sample-data.sql** againt the database
 - Set your timezone in pom.xml in order to the date filtering to work properly :
 
 ```xml
