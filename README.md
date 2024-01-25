@@ -7,6 +7,16 @@ The goal of the this project is to make this server side processing the most gen
 
 ---
 
+## Flow of work
+
+It's super easy to work with it :
+
+1. Collect the json sent by PrimeNg table in your controller
+2. Send this json to the **SearchBuilder** class 
+3. With the object returned from **SearchBuilder** call you dao 
+
+---
+
 ## Structure of the project
 
 - The 'ng' folder contains the sample front-end Angular project
@@ -15,6 +25,7 @@ The goal of the this project is to make this server side processing the most gen
 ## How it works
 
 The idea is to make an utility class that parse and convert a PrimeNg json request to a paging and sorting query and build an **RSQL** query for the columns and general filters, this rsql query will then converted to Jpa specification with **[rsql-jpa-specification](https://github.com/perplexhub/rsql-jpa-specification)** and executed against the dao.
+
 
 ## Core classes and initial setup
 
