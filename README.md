@@ -1,4 +1,4 @@
-# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 5.0)
+# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 6.0)
 
 ## Goal of the project
 
