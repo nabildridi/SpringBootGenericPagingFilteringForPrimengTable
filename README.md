@@ -82,6 +82,13 @@ In order to properly filter against date columns, you need to do two things :
 
 ## Versions
 
+### Changes in version 6.0 (20/12/2025)
+
+- Maven Java version to 23
+- Spring Boot to 3.4.0 version
+- Angular to 19.0.0 version <font color="red">Standalone version(no more ngModule)</font>
+- Primeng to 19.0.1 version
+
 ### Changes in version 5.0 (23/01/2024)
 
 - Maven Java version to 21

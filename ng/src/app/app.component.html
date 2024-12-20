@@ -13,16 +13,26 @@
 >
   <ng-template pTemplate="caption" *ngIf="settings.globalFilter">
     <div class="p-d-flex p-jc-end">
-      <span class="p-input-icon-left">
-        <i class="pi pi-search"></i>
-        <input type="text" pInputText size="50" (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
-      </span>
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Search by id, username or lastname"
+          (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+        />
+      </p-iconfield>
     </div>
   </ng-template>
 
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="col.sortable === false">
+      <th
+        *ngFor="let col of columns"
+        [pSortableColumn]="col.field"
+        [pSortableColumnDisabled]="col.sortable === false"
+      >
         {{ col.header }}
         <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
       </th>
@@ -37,7 +47,12 @@
           matchMode="contains"
         ></p-columnFilter>
 
-        <p-columnFilter *ngIf="col.searchable && col.type === 'number'" type="numeric" [field]="col.field" display="row"></p-columnFilter>
+        <p-columnFilter
+          *ngIf="col.searchable && col.type === 'number'"
+          type="numeric"
+          [field]="col.field"
+          display="row"
+        ></p-columnFilter>
 
         <p-columnFilter
           *ngIf="col.searchable && col.type === 'decimal'"
@@ -48,7 +63,13 @@
           display="row"
         ></p-columnFilter>
 
-        <p-columnFilter *ngIf="col.searchable && col.type === 'date'" type="date" [field]="col.field" display="row" matchMode="is"></p-columnFilter>
+        <p-columnFilter
+          *ngIf="col.searchable && col.type === 'date'"
+          type="date"
+          [field]="col.field"
+          display="row"
+          matchMode="is"
+        ></p-columnFilter>
 
         <p-columnFilter
           *ngIf="col.searchable && col.type === 'boolean'"
@@ -73,7 +94,11 @@
             </div>
           </ng-template>
           <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-            <p-multiSelect [options]="usernames" placeholder="Any" (onChange)="filter($event.value)">
+            <p-multiSelect
+              [options]="usernames"
+              placeholder="Any"
+              (onChange)="filter($event.value)"
+            >
               <ng-template let-option pTemplate="item">
                 <div>
                   <span class="ml-1">{{ option }}</span>
@@ -102,3 +127,5 @@
     </tr>
   </ng-template>
 </p-table>
+
+<router-outlet></router-outlet>

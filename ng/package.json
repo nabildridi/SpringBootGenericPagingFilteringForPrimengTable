@@ -1,5 +1,5 @@
 {
-  "name": "front",
+  "name": "frontend",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -10,33 +10,34 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^17.0.0",
-    "@angular/common": "^17.0.0",
-    "@angular/compiler": "^17.0.0",
-    "@angular/core": "^17.0.0",
-    "@angular/forms": "^17.0.0",
-    "@angular/platform-browser": "^17.0.0",
-    "@angular/platform-browser-dynamic": "^17.0.0",
-    "@angular/router": "^17.0.0",
+    "@angular/animations": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/compiler": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/platform-browser": "^19.0.0",
+    "@angular/platform-browser-dynamic": "^19.0.0",
+    "@angular/router": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.2",
-    "@angular/cdk": "17.0.4",
+    "zone.js": "~0.15.0",
+    "@angular/cdk": "19.0.4",
     "primeflex": "3.3.1",
-    "primeicons": "6.0.1",
-    "primeng": "17.3.0"
+    "primeicons": "7.0.0",
+    "primeng": "19.0.1",
+    "@primeng/themes": "19.0.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.0.9",
-    "@angular/cli": "^17.0.9",
-    "@angular/compiler-cli": "^17.0.0",
+    "@angular-devkit/build-angular": "^19.0.6",
+    "@angular/cli": "^19.0.6",
+    "@angular/compiler-cli": "^19.0.0",
     "@types/jasmine": "~5.1.0",
-    "jasmine-core": "~5.1.0",
+    "jasmine-core": "~5.4.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.2.2"
+    "typescript": "~5.6.2"
   }
 }
