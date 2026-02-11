@@ -1,4 +1,8 @@
-# Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 6.0)
+> # Project archived, I made a better and easier version of the project, please follow the link to the new project : **[PrimengTableSpringFilter](https://github.com/nabildridi/PrimengTableSpringFilter)**
+
+
+
+## Spring Boot generic paging, sorting and filtering for PrimeNg tables (V 6.0)
 
 ## Goal of the project
 
@@ -126,3 +130,4 @@ In order to properly filter against date columns, you need to do two things :
 
 - Primeng 11 came with many changes in the table component : a date filter was added and the text filter can now have multiple rules, this version take account of those changes
 - This project is compatible with the table component of both v10 and v11 of Primeng
+
